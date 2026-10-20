@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=75", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wechat-studio-cli"
+version = "0.1.1"
+description = "Command-line adapter for WeChat Content Studio Core."
+requires-python = ">=3.11"
+dependencies = ["wechat-studio-core==0.1.1"]
+
+[project.scripts]
+wechat-studio = "wechat_studio_cli.__main__:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

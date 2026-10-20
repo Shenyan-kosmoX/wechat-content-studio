@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://shenyan.studio/schemas/wechat-content-studio/preset.schema.json",
+  "title": "WeChat Content Studio Preset",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "preset_schema_version",
+    "preset_id",
+    "name",
+    "version",
+    "status",
+    "layout_style",
+    "writing_profile",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "preset_schema_version": { "const": "1.0" },
+    "preset_id": { "$ref": "#/$defs/stableId" },
+    "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "description": { "type": "string", "maxLength": 1000 },
+    "version": { "type": "string", "format": "semver" },
+    "status": { "enum": ["active", "archived"] },
+    "layout_style": { "$ref": "#/$defs/versionedReference" },
+    "writing_profile": {
+      "oneOf": [
+        { "$ref": "#/$defs/versionedReference" },
+        { "type": "null" }
+      ]
+    },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "extensions": { "$ref": "#/$defs/extensions" }
+  },
+  "$defs": {
+    "stableId": {
+      "type": "string",
+      "pattern": "^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$"
+    },
+    "versionedReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version", "layer"],
+      "properties": {
+        "id": { "$ref": "#/$defs/stableId" },
+        "version": { "type": "string", "format": "semver" },
+        "layer": { "enum": ["project", "private", "builtin", "baseline"] }
+      }
+    },
+    "extensions": {
+      "type": "object",
+      "propertyNames": { "pattern": "^[a-z][a-z0-9.-]{1,63}$" },
+      "additionalProperties": true
+    }
+  }
+}

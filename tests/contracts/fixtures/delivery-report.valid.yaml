@@ -1,0 +1,55 @@
+delivery_report_schema_version: "1.0"
+report_id: REPORT-20260812-103000-ABCD
+project_id: sample-article
+build_id: BUILD-20260812-103000-ABCD
+generated_at: "2026-08-12T10:30:00+08:00"
+status: READY_FOR_USER_WECHAT_VALIDATION
+inputs:
+  - role: article
+    path: article.md
+    sha256: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    bytes: 1000
+style:
+  layout_style:
+    id: basic-editorial
+    version: 1.0.0
+    layer: builtin
+  writing_profile: null
+  preset: null
+outputs:
+  - role: wechat_html
+    path: build/wechat.html
+    sha256: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+    bytes: 8000
+  - role: preview_html
+    path: build/wechat_preview.html
+    sha256: cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+    bytes: 14000
+  - role: image_checklist
+    path: build/image-checklist.md
+    sha256: dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+    bytes: 300
+checks:
+  - name: local_structure
+    ok: true
+    detail: 本地结构检查通过。
+risks:
+  - code: WCS-IMAGE-001
+    severity: warning
+    message: 图片仍需用户在公众号后台确认。
+    context:
+      image_id: IMG-001
+images:
+  - id: IMG-001
+    source: materials/images/cover.png
+    copy_mode: preserve_image
+    delivery_status: awaiting_user_validation
+    fallback: manual_upload
+    caption: 产品封面
+    anchor: BLOCK-001
+validation:
+  local_status: PASS
+  wechat_status: AWAITING_USER_VALIDATION
+  confirmed_by_user: false
+  confirmed_at: null
+  notes: 不要求截图，由用户自行粘贴验证。

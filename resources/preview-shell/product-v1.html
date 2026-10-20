@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="robots" content="noindex,nofollow" />
+  <link rel="icon" href="data:," />
+  <title>{{TITLE}}｜微信公众号富文本预览</title>
+  <style>
+    :root { color-scheme: light; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #f2f4f7;
+      color: #17202a;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+    }
+    .preview-toolbar {
+      position: sticky;
+      z-index: 10;
+      top: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(280px, 420px);
+      align-items: center;
+      gap: 24px;
+      width: 100%;
+      padding: 16px max(20px, calc((100% - 1040px) / 2));
+      border-bottom: 1px solid #e4e7ec;
+      background: rgba(255, 255, 255, 0.97);
+      box-shadow: 0 4px 18px rgba(15, 23, 42, 0.06);
+      backdrop-filter: blur(12px);
+    }
+    .preview-heading { margin: 0 0 5px; font-size: 17px; line-height: 1.4; }
+    .preview-help { margin: 0; color: #667085; font-size: 13px; line-height: 1.55; }
+    .preview-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .copy-button {
+      appearance: none;
+      min-height: 42px;
+      padding: 10px 14px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.4;
+      transition: background-color 0.16s ease, border-color 0.16s ease, transform 0.16s ease;
+    }
+    .copy-button:active { transform: translateY(1px); }
+    .copy-button:disabled { cursor: wait; opacity: 0.72; }
+    .copy-primary { background: #07c160; color: #ffffff; }
+    .copy-primary:hover { background: #06ad56; }
+    .copy-secondary { border-color: #d0d5dd; background: #ffffff; color: #344054; }
+    .copy-secondary:hover { background: #f9fafb; border-color: #98a2b3; }
+    .copy-secondary[data-available="false"] { display: none; }
+    .copy-status {
+      grid-column: 1 / -1;
+      min-height: 20px;
+      margin: 0;
+      color: #667085;
+      font-size: 12px;
+      text-align: right;
+    }
+    .copy-status[data-state="success"] { color: #07883f; }
+    .copy-status[data-state="error"] { color: #c62828; }
+    .preview-stage { padding: 32px 20px 64px; }
+    .article-paper {
+      width: min(100%, 757px);
+      margin: 0 auto;
+      padding: 40px;
+      border: 1px solid #e8eaed;
+      border-radius: 12px;
+      background: #ffffff;
+      box-shadow: 0 14px 40px rgba(15, 23, 42, 0.08);
+    }
+    @media (max-width: 800px) {
+      .preview-toolbar { position: static; display: block; padding: 14px 16px; }
+      .preview-actions { margin-top: 12px; }
+      .copy-status { text-align: left; }
+      .preview-stage { padding: 16px 0 40px; }
+      .article-paper { padding: 24px 12px; border-right: 0; border-left: 0; border-radius: 0; }
+    }
+    @media (max-width: 480px) {
+      .preview-actions { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="preview-toolbar" data-preview-toolbar="true">
+    <div>
+      <h1 class="preview-heading">微信公众号富文本预览</h1>
+      <p class="preview-help">先复制完整图文并粘贴到公众号后台。若图片没有带过去，再使用占位符模式并按图片清单上传。</p>
+    </div>
+    <div class="preview-actions">
+      <button id="copy-rich-text" class="copy-button copy-primary" type="button">复制完整图文</button>
+      <button id="copy-with-placeholders" class="copy-button copy-secondary" type="button" data-available="{{FALLBACK_AVAILABLE}}">复制文字＋图片占位符</button>
+      <p id="copy-status" class="copy-status" role="status" aria-live="polite">建议通过本地预览服务打开本页。</p>
+    </div>
+  </header>
+  <main class="preview-stage">
+    <div class="article-paper">
+      {{ARTICLE_ROOT}}
+    </div>
+  </main>
+  <script>
+    (() => {
+      "use strict";
+
+      const copyRoot = document.getElementById("wechat-copy-root");
+      const richButton = document.getElementById("copy-rich-text");
+      const fallbackButton = document.getElementById("copy-with-placeholders");
+      const copyStatus = document.getElementById("copy-status");
+
+      function setStatus(message, state = "idle") {
+        copyStatus.textContent = message;
+        copyStatus.dataset.state = state;
+      }
+
+      function buildCopyRoot(mode) {
+        const clone = copyRoot.cloneNode(true);
+        if (mode === "placeholder") {
+          clone.querySelectorAll('img[data-fallback-required="true"]').forEach((image) => {
+            const placeholder = document.createElement("p");
+            placeholder.setAttribute(
+              "style",
+              "margin:0 8px 24px;padding:12px 14px;border:1px dashed #b2b2b2;" +
+                "font-size:14px;line-height:1.6;color:#666666;text-align:center;"
+            );
+            placeholder.textContent = image.dataset.fallbackText || "【请在此处插入图片】";
+            const imageSection = image.closest("section");
+            if (imageSection && imageSection !== clone) {
+              imageSection.replaceWith(placeholder);
+            } else {
+              image.replaceWith(placeholder);
+            }
+          });
+        }
+        return clone;
+      }
+
+      function getClipboardPayload(mode) {
+        const root = buildCopyRoot(mode);
+        return {
+          html: root.outerHTML,
+          plain: root.innerText || root.textContent || "",
+        };
+      }
+
+      function copyWithEventFallback(payload) {
+        return new Promise((resolve, reject) => {
+          const selection = window.getSelection();
+          const previousRanges = [];
+          for (let index = 0; index < selection.rangeCount; index += 1) {
+            previousRanges.push(selection.getRangeAt(index).cloneRange());
+          }
+
+          const range = document.createRange();
+          range.selectNode(copyRoot);
+          selection.removeAllRanges();
+          selection.addRange(range);
+
+          const handleCopy = (event) => {
+            event.preventDefault();
+            event.clipboardData.setData("text/html", payload.html);
+            event.clipboardData.setData("text/plain", payload.plain);
+          };
+
+          document.addEventListener("copy", handleCopy, { once: true });
+          let copied = false;
+          try {
+            copied = document.execCommand("copy");
+          } finally {
+            document.removeEventListener("copy", handleCopy);
+            selection.removeAllRanges();
+            for (const previousRange of previousRanges) {
+              selection.addRange(previousRange);
+            }
+          }
+
+          if (copied) {
+            resolve();
+          } else {
+            reject(new Error("浏览器未允许兼容复制命令。"));
+          }
+        });
+      }
+
+      async function writeClipboard(payload) {
+        const supportsRichClipboard =
+          navigator.clipboard &&
+          typeof navigator.clipboard.write === "function" &&
+          typeof ClipboardItem === "function";
+
+        if (supportsRichClipboard) {
+          try {
+            const item = new ClipboardItem({
+              "text/html": new Blob([payload.html], { type: "text/html" }),
+              "text/plain": new Blob([payload.plain], { type: "text/plain" }),
+            });
+            await navigator.clipboard.write([item]);
+            return;
+          } catch (clipboardError) {
+            await copyWithEventFallback(payload);
+            return;
+          }
+        }
+        await copyWithEventFallback(payload);
+      }
+
+      async function copy(mode, button) {
+        const originalText = button.textContent;
+        const payload = getClipboardPayload(mode);
+        richButton.disabled = true;
+        fallbackButton.disabled = true;
+        setStatus("正在写入富文本剪贴板……");
+
+        try {
+          await writeClipboard(payload);
+          button.textContent = "复制成功";
+          setStatus(
+            mode === "placeholder"
+              ? "已复制占位符版本，请按图片清单手动上传图片。"
+              : "已复制完整图文，可粘贴到公众号后台验证。",
+            "success"
+          );
+        } catch (error) {
+          button.textContent = "重新复制";
+          setStatus("复制失败，请通过本地预览服务打开后重试。", "error");
+          console.error("Rich-text copy failed:", error);
+        } finally {
+          richButton.disabled = false;
+          fallbackButton.disabled = false;
+          window.setTimeout(() => {
+            if (button.textContent === "复制成功") {
+              button.textContent = originalText;
+            }
+          }, 1800);
+        }
+      }
+
+      richButton.addEventListener("click", () => copy("rich", richButton));
+      fallbackButton.addEventListener("click", () => copy("placeholder", fallbackButton));
+    })();
+  </script>
+</body>
+</html>

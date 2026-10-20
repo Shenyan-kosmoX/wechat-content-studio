@@ -1,0 +1,11 @@
+cli_result_schema_version: "1.0"
+ok: true
+command: article.render
+data:
+  result_type: article.rendered
+  project_id: sample-article
+  validation_status: READY_FOR_USER_WECHAT_VALIDATION
+  generated_files:
+    - build/wechat.html
+    - build/wechat_preview.html
+warnings: []

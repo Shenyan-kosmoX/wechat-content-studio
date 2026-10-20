@@ -1,0 +1,40 @@
+layout_style_schema_version: "1.0"
+layout_style_id: basic-editorial
+name: Basic Editorial
+version: 1.0.0
+status: builtin
+description: 微信兼容的编辑型排版。
+tags:
+  - editorial
+  - wechat-safe
+article_types:
+  - opinion
+  - tutorial
+root:
+  max_width_px: 677
+  font_size_px: 16
+  line_height: 1.6
+  text_color: "#222222"
+  text_align: justify
+  letter_spacing_em: 0.034
+component_directory: components
+components:
+  - lead
+  - paragraph
+  - section_title
+  - image
+  - caption
+placement_rules:
+  - rule_id: PLACE-IMAGE-001
+    component: image
+    preferred_positions:
+      - after_first_mention
+    forbidden_positions:
+      - between_heading_and_opening_paragraph
+    maximum_consecutive: 3
+evidence:
+  - rule_id: LAYOUT-ROOT-001
+    meaning: 正文根宽度保持在 677px 以内
+    sample_ids:
+      - SAMPLE-001
+    confidence: high

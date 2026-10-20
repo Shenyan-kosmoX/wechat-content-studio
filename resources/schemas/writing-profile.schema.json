@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://shenyan.studio/schemas/wechat-content-studio/writing-profile.schema.json",
+  "title": "WeChat Content Studio Writing Profile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "writing_profile_schema_version",
+    "profile_id",
+    "name",
+    "version",
+    "status",
+    "tone",
+    "narrative_rhythm",
+    "paragraph_length",
+    "argument_structure",
+    "opening_patterns",
+    "ending_patterns",
+    "evidence"
+  ],
+  "properties": {
+    "writing_profile_schema_version": { "const": "1.0" },
+    "profile_id": { "$ref": "#/$defs/stableId" },
+    "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "version": { "type": "string", "format": "semver" },
+    "status": { "enum": ["provisional", "established", "validated", "builtin", "archived"] },
+    "description": { "type": "string", "maxLength": 1000 },
+    "tags": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1, "maxLength": 48 }
+    },
+    "tone": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["traits", "avoid"],
+      "properties": {
+        "traits": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1, "maxLength": 80 }
+        },
+        "avoid": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1, "maxLength": 120 }
+        }
+      }
+    },
+    "narrative_rhythm": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pace", "sentence_variation"],
+      "properties": {
+        "pace": { "enum": ["slow", "measured", "brisk", "mixed"] },
+        "sentence_variation": { "enum": ["low", "medium", "high"] },
+        "notes": { "type": "string", "maxLength": 500 }
+      }
+    },
+    "paragraph_length": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["minimum_characters", "maximum_characters"],
+      "properties": {
+        "minimum_characters": { "type": "integer", "minimum": 0, "maximum": 2000 },
+        "maximum_characters": { "type": "integer", "minimum": 1, "maximum": 5000 }
+      }
+    },
+    "argument_structure": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1, "maxLength": 160 }
+    },
+    "opening_patterns": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1, "maxLength": 240 }
+    },
+    "ending_patterns": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1, "maxLength": 240 }
+    },
+    "evidence": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/evidence" }
+    },
+    "extensions": { "$ref": "#/$defs/extensions" }
+  },
+  "$defs": {
+    "stableId": {
+      "type": "string",
+      "pattern": "^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$"
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rule_id", "meaning", "sample_ids", "confidence"],
+      "properties": {
+        "rule_id": { "type": "string", "pattern": "^WRITE-[A-Z0-9-]{3,64}$" },
+        "meaning": { "type": "string", "minLength": 1, "maxLength": 500 },
+        "sample_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^SAMPLE-[0-9]{3,}$" }
+        },
+        "confidence": { "enum": ["low", "medium", "high"] }
+      }
+    },
+    "extensions": {
+      "type": "object",
+      "propertyNames": { "pattern": "^[a-z][a-z0-9.-]{1,63}$" },
+      "additionalProperties": true
+    }
+  }
+}

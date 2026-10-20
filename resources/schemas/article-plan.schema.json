@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://shenyan.studio/schemas/wechat-content-studio/article-plan.schema.json",
+  "title": "WeChat Content Studio Article Plan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["article_plan_schema_version", "project_id", "status", "blocks"],
+  "properties": {
+    "article_plan_schema_version": { "const": "1.0" },
+    "project_id": { "$ref": "#/$defs/stableId" },
+    "status": { "enum": ["DRAFT", "CONFIRMED", "CONFLICT"] },
+    "blocks": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/block" }
+    },
+    "extensions": { "$ref": "#/$defs/extensions" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "status": { "const": "CONFIRMED" } }, "required": ["status"] },
+      "then": { "properties": { "blocks": { "minItems": 1 } } }
+    }
+  ],
+  "$defs": {
+    "stableId": {
+      "type": "string",
+      "pattern": "^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$"
+    },
+    "placement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["locked"],
+      "properties": {
+        "before": { "type": "string", "pattern": "^(BLOCK|IMG)-[0-9]{3,}$" },
+        "after": { "type": "string", "pattern": "^(BLOCK|IMG)-[0-9]{3,}$" },
+        "inside": { "type": "string", "pattern": "^(BLOCK|IMG)-[0-9]{3,}$" },
+        "locked": { "type": "boolean" }
+      },
+      "oneOf": [
+        { "required": ["before"] },
+        { "required": ["after"] },
+        { "required": ["inside"] }
+      ]
+    },
+    "constraint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "field", "value"],
+      "properties": {
+        "kind": { "enum": ["hard", "soft"] },
+        "field": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "value": {}
+      }
+    },
+    "block": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "purpose", "locked"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^(BLOCK|IMG)-[0-9]{3,}$" },
+        "type": {
+          "enum": [
+            "section",
+            "heading",
+            "subheading",
+            "lead",
+            "paragraph",
+            "key_sentence",
+            "quote",
+            "list",
+            "divider",
+            "image",
+            "caption",
+            "code",
+            "ending"
+          ]
+        },
+        "purpose": { "type": "string", "minLength": 1, "maxLength": 500 },
+        "component": { "type": "string", "pattern": "^[a-z][a-z0-9_-]{1,63}$" },
+        "content_ref": { "type": "string", "pattern": "^(TEXT|REF)-[0-9]{3,}$" },
+        "material_id": { "type": "string", "pattern": "^IMG-[0-9]{3,}$" },
+        "caption": { "type": "string", "maxLength": 500 },
+        "placement": { "$ref": "#/$defs/placement" },
+        "locked": { "type": "boolean" },
+        "constraints": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/constraint" }
+        },
+        "extensions": { "$ref": "#/$defs/extensions" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "type": { "const": "image" } }, "required": ["type"] },
+          "then": {
+            "required": ["material_id", "placement"],
+            "properties": { "id": { "pattern": "^IMG-[0-9]{3,}$" } }
+          },
+          "else": { "properties": { "id": { "pattern": "^BLOCK-[0-9]{3,}$" } } }
+        }
+      ]
+    },
+    "extensions": {
+      "type": "object",
+      "propertyNames": { "pattern": "^[a-z][a-z0-9.-]{1,63}$" },
+      "additionalProperties": true
+    }
+  }
+}

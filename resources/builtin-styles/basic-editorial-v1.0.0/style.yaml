@@ -1,0 +1,31 @@
+style_pack_schema_version: "1.0"
+style_pack_id: basic-editorial
+name: Basic Editorial
+version: 1.0.0
+layer: builtin
+status: active
+maturity: builtin
+tags: [basic, editorial, inline-style]
+article_types: [tutorial, essay, other]
+layout_style:
+  id: basic-editorial
+  version: 1.0.0
+writing_profile: null
+paths:
+  style: style.yaml
+  layout_style: layout-style.yaml
+  writing_profile: null
+  sources: sources.yaml
+  placement_rules: placement-rules.yaml
+  article_recipes: article-recipes.yaml
+  validation: validation.yaml
+  components: components
+provenance:
+  created_at: "2026-10-20T19:00:00+08:00"
+  sample_ids: []
+  evidence_scope: publisher_curated
+  parent_version: null
+extensions:
+  shenyan.design:
+    origin: original-basic-design
+    description: Neutral layout created for this public package; no reference article or private template was used.

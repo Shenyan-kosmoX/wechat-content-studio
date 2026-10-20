@@ -1,0 +1,23 @@
+layout_style_schema_version: "1.0"
+layout_style_id: basic-editorial
+name: Basic Editorial
+version: 1.0.0
+status: builtin
+description: 简单的正文、标题与引用排版，可作为自己的风格起点。
+tags: [basic, editorial]
+article_types: [tutorial, essay, other]
+root:
+  max_width_px: 677
+  font_size_px: 16
+  line_height: 1.6
+  text_color: "#222222"
+  text_align: justify
+  letter_spacing_em: 0.034
+component_directory: components
+components: [paragraph, section_title, sub_title, key_sentence, quote, image, caption, divider, code, list, lead, ending]
+placement_rules: []
+evidence: []
+extensions:
+  shenyan.design:
+    origin: original-basic-design
+    notes: Component styling is an original neutral default, not an inferred publisher profile.

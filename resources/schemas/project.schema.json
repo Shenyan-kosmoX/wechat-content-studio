@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://shenyan.studio/schemas/wechat-content-studio/project.schema.json",
+  "title": "WeChat Content Studio Project",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "project_schema_version",
+    "project_id",
+    "name",
+    "mode",
+    "status",
+    "created_at",
+    "updated_at",
+    "generation",
+    "style",
+    "paths"
+  ],
+  "properties": {
+    "project_schema_version": { "const": "1.0" },
+    "project_id": { "$ref": "#/$defs/stableId" },
+    "name": { "type": "string", "minLength": 1, "maxLength": 160 },
+    "mode": { "enum": ["co_write", "organize", "layout_only"] },
+    "status": {
+      "enum": [
+        "DRAFTING",
+        "PLAN_CONFIRMED",
+        "CONTENT_READY",
+        "READY_FOR_USER_WECHAT_VALIDATION",
+        "WECHAT_VALIDATED",
+        "NEEDS_REVISION"
+      ]
+    },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "generation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sequence", "core_version"],
+      "properties": {
+        "sequence": { "type": "integer", "minimum": 0 },
+        "core_version": { "type": "string", "format": "semver" },
+        "last_build_id": { "type": ["string", "null"], "pattern": "^BUILD-[0-9]{8}-[0-9]{6}-[A-Z0-9]{4,12}$" }
+      }
+    },
+    "style": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["layout_style", "writing_profile", "preset"],
+      "properties": {
+        "layout_style": { "$ref": "#/$defs/versionedReference" },
+        "writing_profile": {
+          "oneOf": [
+            { "$ref": "#/$defs/versionedReference" },
+            { "type": "null" }
+          ]
+        },
+        "preset": {
+          "oneOf": [
+            { "$ref": "#/$defs/versionedReference" },
+            { "type": "null" }
+          ]
+        }
+      }
+    },
+    "paths": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["material_manifest", "article_plan", "article", "build_directory"],
+      "properties": {
+        "material_manifest": { "type": "string", "format": "safe-relative-path" },
+        "article_plan": { "type": "string", "format": "safe-relative-path" },
+        "article": { "type": "string", "format": "safe-relative-path" },
+        "build_directory": { "type": "string", "format": "safe-relative-path" }
+      }
+    },
+    "extensions": { "$ref": "#/$defs/extensions" }
+  },
+  "$defs": {
+    "stableId": {
+      "type": "string",
+      "pattern": "^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$"
+    },
+    "versionedReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version", "layer"],
+      "properties": {
+        "id": { "$ref": "#/$defs/stableId" },
+        "version": { "type": "string", "format": "semver" },
+        "layer": { "enum": ["project", "private", "builtin", "baseline"] }
+      }
+    },
+    "extensions": {
+      "type": "object",
+      "propertyNames": { "pattern": "^[a-z][a-z0-9.-]{1,63}$" },
+      "additionalProperties": true
+    }
+  }
+}

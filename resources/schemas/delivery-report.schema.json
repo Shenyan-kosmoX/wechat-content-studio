@@ -1,0 +1,202 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://shenyan.studio/schemas/wechat-content-studio/delivery-report.schema.json",
+  "title": "WeChat Content Studio Delivery Report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "delivery_report_schema_version",
+    "report_id",
+    "project_id",
+    "build_id",
+    "generated_at",
+    "status",
+    "inputs",
+    "style",
+    "outputs",
+    "checks",
+    "risks",
+    "images",
+    "validation"
+  ],
+  "properties": {
+    "delivery_report_schema_version": { "const": "1.0" },
+    "report_id": { "type": "string", "pattern": "^REPORT-[0-9]{8}-[0-9]{6}-[A-Z0-9]{4,12}$" },
+    "project_id": { "$ref": "#/$defs/stableId" },
+    "build_id": { "type": "string", "pattern": "^BUILD-[0-9]{8}-[0-9]{6}-[A-Z0-9]{4,12}$" },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "status": {
+      "enum": [
+        "DRAFTING",
+        "PLAN_CONFIRMED",
+        "CONTENT_READY",
+        "READY_FOR_USER_WECHAT_VALIDATION",
+        "WECHAT_VALIDATED",
+        "NEEDS_REVISION"
+      ]
+    },
+    "inputs": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/fileRecord" }
+    },
+    "style": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["layout_style", "writing_profile", "preset"],
+      "properties": {
+        "layout_style": { "$ref": "#/$defs/versionedReference" },
+        "writing_profile": {
+          "oneOf": [
+            { "$ref": "#/$defs/versionedReference" },
+            { "type": "null" }
+          ]
+        },
+        "preset": {
+          "oneOf": [
+            { "$ref": "#/$defs/versionedReference" },
+            { "type": "null" }
+          ]
+        }
+      }
+    },
+    "outputs": {
+      "type": "array",
+      "minItems": 3,
+      "items": { "$ref": "#/$defs/fileRecord" }
+    },
+    "checks": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "ok", "detail"],
+        "properties": {
+          "name": { "type": "string", "pattern": "^[a-z][a-z0-9_-]{1,79}$" },
+          "ok": { "type": "boolean" },
+          "detail": { "type": "string", "maxLength": 2000 }
+        }
+      }
+    },
+    "risks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["code", "severity", "message"],
+        "properties": {
+          "code": { "type": "string", "pattern": "^WCS-[A-Z]+-[0-9]{3}$" },
+          "severity": { "enum": ["info", "warning", "error"] },
+          "message": { "type": "string", "minLength": 1, "maxLength": 1000 },
+          "context": { "type": "object", "additionalProperties": true }
+        }
+      }
+    },
+    "images": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/imageStatus" }
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["local_status", "wechat_status", "confirmed_by_user", "confirmed_at"],
+      "properties": {
+        "local_status": { "enum": ["PASS", "FAIL"] },
+        "wechat_status": { "enum": ["NOT_TESTED", "AWAITING_USER_VALIDATION", "VALIDATED", "FAILED"] },
+        "confirmed_by_user": { "type": "boolean" },
+        "confirmed_at": { "type": ["string", "null"], "format": "date-time" },
+        "notes": { "type": "string", "maxLength": 2000 }
+      }
+    },
+    "extensions": { "$ref": "#/$defs/extensions" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "status": { "const": "WECHAT_VALIDATED" } }, "required": ["status"] },
+      "then": {
+        "properties": {
+          "validation": {
+            "properties": {
+              "wechat_status": { "const": "VALIDATED" },
+              "confirmed_by_user": { "const": true },
+              "confirmed_at": { "type": "string", "format": "date-time" }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "validation": {
+            "properties": { "wechat_status": { "const": "VALIDATED" } },
+            "required": ["wechat_status"]
+          }
+        },
+        "required": ["validation"]
+      },
+      "then": {
+        "properties": {
+          "validation": {
+            "properties": {
+              "confirmed_by_user": { "const": true },
+              "confirmed_at": { "type": "string", "format": "date-time" }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "stableId": {
+      "type": "string",
+      "pattern": "^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$"
+    },
+    "versionedReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version", "layer"],
+      "properties": {
+        "id": { "$ref": "#/$defs/stableId" },
+        "version": { "type": "string", "format": "semver" },
+        "layer": { "enum": ["project", "private", "builtin", "baseline"] }
+      }
+    },
+    "fileRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "path", "sha256", "bytes"],
+      "properties": {
+        "role": { "type": "string", "pattern": "^[a-z][a-z0-9_-]{1,79}$" },
+        "path": { "type": "string", "format": "safe-relative-path" },
+        "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "bytes": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "imageStatus": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "source", "copy_mode", "delivery_status", "fallback"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^IMG-[0-9]{3,}$" },
+        "source": {
+          "oneOf": [
+            { "type": "string", "format": "safe-relative-path" },
+            { "type": "string", "pattern": "^https?://[^\\s]+$" }
+          ]
+        },
+        "copy_mode": { "enum": ["preserve_image", "placeholder"] },
+        "delivery_status": { "enum": ["ready", "awaiting_user_validation", "failed", "manual_upload_required"] },
+        "fallback": { "enum": ["manual_upload", "none"] },
+        "caption": { "type": "string", "maxLength": 500 },
+        "anchor": { "type": "string", "pattern": "^BLOCK-[0-9]{3,}$" }
+      }
+    },
+    "extensions": {
+      "type": "object",
+      "propertyNames": { "pattern": "^[a-z][a-z0-9.-]{1,63}$" },
+      "additionalProperties": true
+    }
+  }
+}

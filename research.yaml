@@ -1,0 +1,56 @@
+schema_version: '0.1'
+kind: project
+project:
+  id: wechat-content-studio
+  name: WeChat Content Studio
+  domain: writing-and-expression
+  stage: public-source
+  version: 0.1.1
+  maintainers: [wenkuizhao261-pixel]
+documents:
+  overview: README.md
+  research: docs/SKILLS.md
+  usage: docs/QUICKSTART.md
+  validation: docs/VALIDATION.md
+  limitations: docs/VALIDATION.md
+  sources: docs/SOURCES.md
+  contributing: CONTRIBUTING.md
+capabilities:
+  - id: article-projects
+    description: 在本地组织文章、素材、结构计划和锁定位置。
+    documentation: docs/QUICKSTART.md
+  - id: preview-and-copy
+    description: 渲染正文与预览，提供富文本及纯文本复制和图片清单。
+    documentation: docs/QUICKSTART.md
+  - id: style-distillation
+    description: 从选定参考材料分析写作与布局，生成风格候选。
+    documentation: docs/STYLES.md
+  - id: style-library
+    description: 导入、确认、组合、版本化和归档个人风格。
+    documentation: docs/STYLES.md
+environments:
+  - id: source-python
+    description: Python 3.11+，源码 editable 安装；首版使用 Windows Python 3.12 检查。
+    platforms: [windows]
+    dependency_files: [packages/core/pyproject.toml, apps/cli/pyproject.toml]
+    setup_steps:
+      - argv: [python, -m, pip, install, -e, packages/core, -e, apps/cli]
+assets:
+  - id: core
+    description: 确定性的文章、素材与样式操作。
+    record: {path: packages/core/src/wechat_studio/__init__.py}
+  - id: skills
+    description: 三个可安装 skill 的入口。
+    record: {path: docs/SKILLS.md}
+cases:
+  - id: first-article
+    manifest: cases/first-article/case.yaml
+licensing:
+  code_license: MIT
+  license_file: LICENSE
+  sources: docs/SOURCES.md
+extensions:
+  - id: content-workflow
+    version: '0.1'
+    description: 使用功能和输出检查；风格选择与编辑器粘贴通过实际阅读和操作反馈。
+    record: {path: docs/VALIDATION.md}

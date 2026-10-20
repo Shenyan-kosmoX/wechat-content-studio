@@ -1,0 +1,4 @@
+interface:
+  display_name: "公众号风格库管理"
+  short_description: "管理风格候选导入、确认提升、预设组合、版本控制与归档"
+  default_prompt: "Use $wechat-manage-style-library to review my style library and safely promote or preset a confirmed candidate."

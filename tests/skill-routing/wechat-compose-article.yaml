@@ -1,0 +1,95 @@
+skill: wechat-compose-article
+should_trigger:
+  - id: compose-001
+    prompt: 我有一个选题，想和你一起讨论结构并写成公众号文章。
+    reason: 从主题共同写作。
+  - id: compose-002
+    prompt: 把这些零散笔记和三张图片整理成一篇公众号推文。
+    reason: 素材整理与图片编排。
+  - id: compose-003
+    prompt: 这篇稿子内容不要改，只帮我做微信公众号排版。
+    reason: 完整稿件纯排版。
+  - id: compose-004
+    prompt: 图片二必须放在解释会员设置的段落后面，帮我生成预览。
+    reason: 锁定图片位置并交付预览。
+  - id: compose-005
+    prompt: 继续修改项目 product-review-august，保留之前锁定的素材位置。
+    reason: 恢复并更新历史项目。
+  - id: compose-006
+    prompt: 请把这份 Markdown 做成浏览器能打开的公众号预览页。
+    reason: 文章渲染与浏览器预览。
+  - id: compose-007
+    prompt: 给我一个能一键复制完整图文到公众号后台的版本。
+    reason: 富文本复制交付。
+  - id: compose-008
+    prompt: 先给我文章蓝图，确认后再把全文写出来。
+    reason: 共同写作蓝图流程。
+  - id: compose-009
+    prompt: 我给你采访记录和产品截图，你帮我排成一篇连贯文章。
+    reason: 混合文字与图片素材组织。
+  - id: compose-010
+    prompt: 上次生成的公众号文章图片粘贴失败了，帮我改用上传占位清单。
+    reason: 图片交付兜底。
+should_not_trigger:
+  - id: compose-no-001
+    prompt: 我喜欢半佛仙人的风格，公开多找几篇文章让我确认后蒸馏。
+    expected_skill: wechat-distill-style
+    reason: 样本收集与风格蒸馏。
+  - id: compose-no-002
+    prompt: 只分析这些 HTML 的标题、段落和图片样式，不写文章。
+    expected_skill: wechat-distill-style
+    reason: 排版证据分析。
+  - id: compose-no-003
+    prompt: 把这个候选 Style Pack 提升到我的私人风格库。
+    expected_skill: wechat-manage-style-library
+    reason: 候选提升。
+  - id: compose-no-004
+    prompt: 列出我所有已归档和未归档的写作档案。
+    expected_skill: wechat-manage-style-library
+    reason: 风格库检索。
+  - id: compose-no-005
+    prompt: 把清晰分析型写作档案和 Basic 排版保存成预设。
+    expected_skill: wechat-manage-style-library
+    reason: 预设管理。
+  - id: compose-no-006
+    prompt: 帮我写一个 Python 排序算法。
+    expected_skill: none
+    reason: 非公众号产品任务。
+  - id: compose-no-007
+    prompt: 查询今天上海的天气。
+    expected_skill: none
+    reason: 非文章项目任务。
+  - id: compose-no-008
+    prompt: 删除我电脑里的临时文件。
+    expected_skill: none
+    reason: 非公众号产品任务。
+  - id: compose-no-009
+    prompt: 检查这篇参考文章是否只提供了写作证据。
+    expected_skill: wechat-distill-style
+    reason: 蒸馏证据范围判断。
+  - id: compose-no-010
+    prompt: 归档 old-editorial 1.0.0，但保留历史文章可解析。
+    expected_skill: wechat-manage-style-library
+    reason: 风格版本归档。
+cross_skill_confusions:
+  - prompt: 用我刚确认的八篇文章先学习风格，然后再写我的稿子。
+    expected_sequence:
+      - wechat-distill-style
+      - wechat-compose-article
+    reason: 先生成候选，再用于文章。
+  - prompt: 这篇文章已经写完，只需用现有私人风格排版。
+    expected_skill: wechat-compose-article
+    reason: 使用现有风格不等于管理风格库。
+  - prompt: 帮我打开文章预览并复制，不要升级风格。
+    expected_skill: wechat-compose-article
+    reason: 交付而非版本管理。
+  - prompt: 我想把这篇文章排版效果保存成新的长期风格。
+    expected_sequence:
+      - wechat-distill-style
+      - wechat-manage-style-library
+    reason: 先提炼候选，再显式提升。
+  - prompt: 先查看风格库，选好后继续上次文章。
+    expected_sequence:
+      - wechat-manage-style-library
+      - wechat-compose-article
+    reason: 先选择，再更新项目。

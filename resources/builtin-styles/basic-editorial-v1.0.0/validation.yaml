@@ -1,0 +1,6 @@
+validation_kind: structural-and-rendering
+wechat_editor_status: awaiting_user_validation
+checks:
+  - Load all twelve components and validate their placeholders.
+  - Build and inspect a local article preview.
+  - Paste into the WeChat editor and confirm the final appearance before publishing.

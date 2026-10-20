@@ -1,0 +1,4 @@
+interface:
+  display_name: "公众号文章创作与排版"
+  short_description: "共同写作、素材定位、浏览器预览与公众号富文本一键复制"
+  default_prompt: "Use $wechat-compose-article to turn my text and images into a recoverable WeChat article preview with rich-text copy."

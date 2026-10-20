@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://shenyan.studio/schemas/wechat-content-studio/style-pack.schema.json",
+  "title": "WeChat Content Studio Style Pack",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "style_pack_schema_version",
+    "style_pack_id",
+    "name",
+    "version",
+    "layer",
+    "status",
+    "maturity",
+    "layout_style",
+    "writing_profile",
+    "paths",
+    "provenance"
+  ],
+  "properties": {
+    "style_pack_schema_version": { "const": "1.0" },
+    "style_pack_id": { "$ref": "#/$defs/stableId" },
+    "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "version": { "type": "string", "format": "semver" },
+    "layer": { "enum": ["project", "private", "builtin"] },
+    "status": { "enum": ["candidate", "active", "archived"] },
+    "maturity": { "enum": ["provisional", "established", "validated", "builtin"] },
+    "tags": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1, "maxLength": 48 }
+    },
+    "article_types": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "enum": ["opinion", "tutorial", "review", "news", "interview", "essay", "other"] }
+    },
+    "layout_style": { "$ref": "#/$defs/versionedReference" },
+    "writing_profile": {
+      "oneOf": [
+        { "$ref": "#/$defs/versionedReference" },
+        { "type": "null" }
+      ]
+    },
+    "paths": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["style", "layout_style", "writing_profile", "sources", "placement_rules", "article_recipes", "validation", "components"],
+      "properties": {
+        "style": { "type": "string", "format": "safe-relative-path" },
+        "layout_style": { "type": "string", "format": "safe-relative-path" },
+        "writing_profile": {
+          "oneOf": [
+            { "type": "string", "format": "safe-relative-path" },
+            { "type": "null" }
+          ]
+        },
+        "sources": { "type": "string", "format": "safe-relative-path" },
+        "placement_rules": { "type": "string", "format": "safe-relative-path" },
+        "article_recipes": { "type": "string", "format": "safe-relative-path" },
+        "validation": { "type": "string", "format": "safe-relative-path" },
+        "components": { "type": "string", "format": "safe-relative-path" }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["created_at", "sample_ids", "evidence_scope"],
+      "properties": {
+        "created_at": { "type": "string", "format": "date-time" },
+        "sample_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^SAMPLE-[0-9]{3,}$" }
+        },
+        "evidence_scope": { "enum": ["writing_only", "layout_only", "writing_and_layout", "publisher_curated"] },
+        "parent_version": {
+          "oneOf": [
+            { "type": "string", "format": "semver" },
+            { "type": "null" }
+          ]
+        }
+      }
+    },
+    "extensions": { "$ref": "#/$defs/extensions" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "layer": { "const": "builtin" } }, "required": ["layer"] },
+      "then": { "properties": { "maturity": { "const": "builtin" }, "status": { "const": "active" } } }
+    },
+    {
+      "if": { "properties": { "status": { "const": "candidate" } }, "required": ["status"] },
+      "then": { "properties": { "maturity": { "enum": ["provisional", "established"] } } }
+    }
+  ],
+  "$defs": {
+    "stableId": {
+      "type": "string",
+      "pattern": "^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$"
+    },
+    "versionedReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version"],
+      "properties": {
+        "id": { "$ref": "#/$defs/stableId" },
+        "version": { "type": "string", "format": "semver" }
+      }
+    },
+    "extensions": {
+      "type": "object",
+      "propertyNames": { "pattern": "^[a-z][a-z0-9.-]{1,63}$" },
+      "additionalProperties": true
+    }
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://shenyan.studio/schemas/wechat-content-studio/material-manifest.schema.json",
+  "title": "WeChat Content Studio Material Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["material_manifest_schema_version", "project_id", "generated_at", "items"],
+  "properties": {
+    "material_manifest_schema_version": { "const": "1.0" },
+    "project_id": { "$ref": "#/$defs/stableId" },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "items": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/material" }
+    },
+    "extensions": { "$ref": "#/$defs/extensions" }
+  },
+  "$defs": {
+    "stableId": {
+      "type": "string",
+      "pattern": "^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$"
+    },
+    "material": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "path", "sha256", "bytes", "source", "integrity", "locked"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^(TEXT|REF|IMG)-[0-9]{3,}$" },
+        "kind": { "enum": ["text", "reference", "image"] },
+        "path": { "type": "string", "format": "safe-relative-path" },
+        "original_name": { "type": "string", "minLength": 1, "maxLength": 255 },
+        "mime_type": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "bytes": { "type": "integer", "minimum": 0 },
+        "summary": { "type": "string", "maxLength": 1000 },
+        "source": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "reference"],
+          "properties": {
+            "kind": { "enum": ["user_upload", "pasted", "url", "generated", "legacy_import"] },
+            "reference": { "type": "string", "minLength": 1, "maxLength": 2048 }
+          }
+        },
+        "integrity": { "enum": ["verified", "missing", "mismatch", "unchecked"] },
+        "locked": { "type": "boolean" },
+        "extensions": { "$ref": "#/$defs/extensions" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "kind": { "const": "text" } }, "required": ["kind"] },
+          "then": { "properties": { "id": { "pattern": "^TEXT-[0-9]{3,}$" } } }
+        },
+        {
+          "if": { "properties": { "kind": { "const": "reference" } }, "required": ["kind"] },
+          "then": { "properties": { "id": { "pattern": "^REF-[0-9]{3,}$" } } }
+        },
+        {
+          "if": { "properties": { "kind": { "const": "image" } }, "required": ["kind"] },
+          "then": {
+            "required": ["mime_type"],
+            "properties": {
+              "id": { "pattern": "^IMG-[0-9]{3,}$" },
+              "mime_type": { "pattern": "^image/" }
+            }
+          }
+        }
+      ]
+    },
+    "extensions": {
+      "type": "object",
+      "propertyNames": { "pattern": "^[a-z][a-z0-9.-]{1,63}$" },
+      "additionalProperties": true
+    }
+  }
+}

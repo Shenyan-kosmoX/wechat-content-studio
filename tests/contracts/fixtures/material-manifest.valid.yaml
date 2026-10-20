@@ -1,0 +1,30 @@
+material_manifest_schema_version: "1.0"
+project_id: sample-article
+generated_at: "2026-08-12T09:10:00+08:00"
+items:
+  - id: TEXT-001
+    kind: text
+    path: materials/source-text/draft.md
+    original_name: draft.md
+    mime_type: text/markdown
+    sha256: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    bytes: 120
+    summary: 用户提供的完整稿件
+    source:
+      kind: user_upload
+      reference: draft.md
+    integrity: verified
+    locked: true
+  - id: IMG-001
+    kind: image
+    path: materials/images/cover.png
+    original_name: cover.png
+    mime_type: image/png
+    sha256: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+    bytes: 2048
+    summary: 文章封面图
+    source:
+      kind: user_upload
+      reference: cover.png
+    integrity: verified
+    locked: true

@@ -1,0 +1,34 @@
+{
+  "name": "wechat-content-studio",
+  "version": "0.1.1",
+  "description": "A local-first WeChat Official Account writing, style distillation, layout preview, and rich-text delivery workspace for Codex.",
+  "author": {
+    "name": "深研 Studio"
+  },
+  "skills": "./skills/",
+  "keywords": [
+    "wechat",
+    "official-account",
+    "writing",
+    "rich-text",
+    "style-distillation"
+  ],
+  "interface": {
+    "displayName": "微信公众号内容工作台",
+    "shortDescription": "共同写作、风格蒸馏、微信排版预览与富文本复制。",
+    "longDescription": "与 Agent 共同整理文章、登记图片和选择样式，生成本地预览，再复制到公众号编辑器。三个 skill 分别负责文章编排、参考风格提取和个人风格库管理。公开源码版附带基础排版，支持使用自己的 Style Pack。",
+    "developerName": "深研 Studio",
+    "category": "Productivity",
+    "capabilities": [
+      "共同写作与素材整理",
+      "可恢复文章项目",
+      "风格蒸馏与版本化风格库",
+      "浏览器预览与公众号富文本复制"
+    ],
+    "defaultPrompt": [
+      "帮我把这份文字和图片整理成一篇可粘贴到公众号的文章。",
+      "从我确认的参考文章中蒸馏写作和排版风格。",
+      "查看我的风格库，并把候选风格确认后保存为常用预设。"
+    ]
+  }
+}

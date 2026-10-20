@@ -1,0 +1,16 @@
+preset_schema_version: "1.0"
+preset_id: tech-review-default
+name: 科技评测默认组合
+description: 清晰分析型写作与 Basic 编辑型排版。
+version: 1.0.0
+status: active
+layout_style:
+  id: basic-editorial
+  version: 1.0.0
+  layer: builtin
+writing_profile:
+  id: clear-analytical
+  version: 1.0.0
+  layer: private
+created_at: "2026-08-12T10:10:00+08:00"
+updated_at: "2026-08-12T10:10:00+08:00"

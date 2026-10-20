@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://shenyan.studio/schemas/wechat-content-studio/cli-result.schema.json",
+  "title": "WeChat Content Studio CLI Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["cli_result_schema_version", "ok", "command"],
+  "properties": {
+    "cli_result_schema_version": { "const": "1.0" },
+    "ok": { "type": "boolean" },
+    "command": { "type": "string", "pattern": "^[a-z][a-z0-9_-]*\\.[a-z][a-z0-9_-]*$" },
+    "data": {
+      "type": "object",
+      "required": ["result_type"],
+      "properties": {
+        "result_type": { "type": "string", "pattern": "^[a-z][a-z0-9_.-]{1,79}$" }
+      },
+      "additionalProperties": true
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["code", "message"],
+        "properties": {
+          "code": { "type": "string", "pattern": "^WCS-[A-Z]+-[0-9]{3}$" },
+          "message": { "type": "string", "minLength": 1, "maxLength": 1000 },
+          "context": { "type": "object", "additionalProperties": true }
+        }
+      }
+    },
+    "error": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "message", "context"],
+      "properties": {
+        "code": { "type": "string", "pattern": "^WCS-[A-Z]+-[0-9]{3}$" },
+        "message": { "type": "string", "minLength": 1, "maxLength": 1000 },
+        "context": { "type": "object", "additionalProperties": true }
+      }
+    },
+    "extensions": { "$ref": "#/$defs/extensions" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "ok": { "const": true } }, "required": ["ok"] },
+      "then": {
+        "required": ["data", "warnings"],
+        "not": { "required": ["error"] }
+      },
+      "else": {
+        "required": ["error"],
+        "not": { "required": ["data"] }
+      }
+    }
+  ],
+  "$defs": {
+    "extensions": {
+      "type": "object",
+      "propertyNames": { "pattern": "^[a-z][a-z0-9.-]{1,63}$" },
+      "additionalProperties": true
+    }
+  }
+}

@@ -1,0 +1,93 @@
+skill: wechat-distill-style
+should_trigger:
+  - id: distill-001
+    prompt: 我喜欢这个公众号的排版，帮我公开多找几篇候选文章给我确认。
+    reason: 公开寻找并确认样本。
+  - id: distill-002
+    prompt: 从我给的五篇参考 HTML 中提炼写作和排版规则。
+    reason: HTML 双证据蒸馏。
+  - id: distill-003
+    prompt: 这些只有纯文本，你只提炼写作档案，不要猜排版。
+    reason: 纯文本 writing profile。
+  - id: distill-004
+    prompt: 分析这个作者常见的开头、论证节奏和结尾，但不要复制原句。
+    reason: 高层写作特征提炼。
+  - id: distill-005
+    prompt: 比较这些文章的标题层级、重点句和图片位置规律。
+    reason: 组件和位置证据分析。
+  - id: distill-006
+    prompt: 先列出候选样本、文章类型和可访问性，我确认后再开始学习。
+    reason: 样本确认门槛。
+  - id: distill-007
+    prompt: 检查这九篇样本是否真的达到 established，而不是只看数量。
+    reason: 成熟度质量门槛。
+  - id: distill-008
+    prompt: 把播放器、评论和点赞区域排除后再统计 inline style。
+    reason: 微信外围 UI 过滤。
+  - id: distill-009
+    prompt: 给每条推断规则标出 SAMPLE ID、置信度和冲突。
+    reason: 可追溯证据。
+  - id: distill-010
+    prompt: 生成一个项目临时候选风格让我先预览，但不要加入私人库。
+    reason: 只生成项目候选。
+should_not_trigger:
+  - id: distill-no-001
+    prompt: 用现有 Basic 风格把我的完整稿件排版并生成复制页面。
+    expected_skill: wechat-compose-article
+    reason: 使用现有风格交付文章。
+  - id: distill-no-002
+    prompt: 和我讨论选题，先做文章蓝图再写全文。
+    expected_skill: wechat-compose-article
+    reason: 共同写作。
+  - id: distill-no-003
+    prompt: 继续更新项目 launch-notes，并保留锁定图片。
+    expected_skill: wechat-compose-article
+    reason: 历史项目更新。
+  - id: distill-no-004
+    prompt: 我确认这个候选了，把它提升成私人稳定版本。
+    expected_skill: wechat-manage-style-library
+    reason: 显式提升。
+  - id: distill-no-005
+    prompt: 把两个已有风格组合成一个常用 preset。
+    expected_skill: wechat-manage-style-library
+    reason: 预设管理。
+  - id: distill-no-006
+    prompt: 归档旧版 writing profile。
+    expected_skill: wechat-manage-style-library
+    reason: 归档管理。
+  - id: distill-no-007
+    prompt: 帮我做一个 Excel 数据透视表。
+    expected_skill: none
+    reason: 非公众号风格任务。
+  - id: distill-no-008
+    prompt: 把这段英文翻译成中文。
+    expected_skill: none
+    reason: 普通翻译。
+  - id: distill-no-009
+    prompt: 直接模仿这个在世作者的标志性表达写一篇新文。
+    expected_skill: none
+    reason: 不应以蒸馏名义复制作者身份特征。
+  - id: distill-no-010
+    prompt: 查看私人风格库里 editorial 的所有版本和路径。
+    expected_skill: wechat-manage-style-library
+    reason: 风格库检索。
+cross_skill_confusions:
+  - prompt: 找参考文章并把最终候选保存成长期风格。
+    expected_sequence:
+      - wechat-distill-style
+      - wechat-manage-style-library
+    reason: 蒸馏和提升必须分阶段。
+  - prompt: 学完这个风格后立即用于我的文章。
+    expected_sequence:
+      - wechat-distill-style
+      - wechat-compose-article
+    reason: 候选生成与文章交付分离。
+  - prompt: 用户已经明确确认样本，但尚未确认候选风格。
+    expected_skill: wechat-distill-style
+    reason: 可以分析和生成候选，不能提升。
+  - prompt: 用户确认了候选，并只要求放进私人库。
+    expected_skill: wechat-manage-style-library
+    reason: 已越过样本分析阶段。
+  - prompt: 只给出一篇纯文本参考并要求复制排版。
+    expected_skill: wechat-distill-style
+    reason: 应说明只能生成写作档案，不能虚构排版。

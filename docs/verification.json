@@ -1,0 +1,14 @@
+{
+  "version": "0.1.1",
+  "date": "2026-10-20",
+  "platform": "Windows x64",
+  "python": "3.12",
+  "checks": [
+    {"command": "python -m pytest -q", "result": "138 passed", "scope": "Core, CLI, contracts, rendering, style lifecycle and skill routing fixtures"},
+    {"command": "python tools/smoke_public.py --output .local/public-smoke-v2", "result": "passed", "scope": "New article workspace, validation, HTML rendering, three installed skill launchers and existing-install preservation"},
+    {"command": "SORS 0.1 check_project.py --case first-article --step render-example --run", "result": "passed", "scope": "Project/case structure and actual declared example execution with freshly produced outputs"},
+    {"command": "python tools/check_public_release.py", "result": "passed", "scope": "Selected public source files, known excluded assets and local links"}
+  ],
+  "manual_checks": {"wechat_editor_paste_for_this_release": "not_run"},
+  "notes": "Clipboard implementation is exercised through generated artifacts; final editor paste remains an actual-user check. Historical reference styles and output snapshots were not included."
+}

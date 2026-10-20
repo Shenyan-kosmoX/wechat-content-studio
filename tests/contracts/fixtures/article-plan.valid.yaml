@@ -1,0 +1,24 @@
+article_plan_schema_version: "1.0"
+project_id: sample-article
+status: CONFIRMED
+blocks:
+  - id: BLOCK-001
+    type: paragraph
+    purpose: 解释产品定位
+    component: paragraph
+    content_ref: TEXT-001
+    locked: true
+    constraints:
+      - kind: hard
+        field: original_meaning
+        value: preserve
+  - id: IMG-001
+    type: image
+    purpose: 展示产品封面
+    component: image
+    material_id: IMG-001
+    caption: 产品封面
+    placement:
+      after: BLOCK-001
+      locked: true
+    locked: true

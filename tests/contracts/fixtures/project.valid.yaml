@@ -1,0 +1,26 @@
+project_schema_version: "1.0"
+project_id: sample-article
+name: 示例文章
+mode: layout_only
+status: CONTENT_READY
+created_at: "2026-08-12T09:00:00+08:00"
+updated_at: "2026-08-12T09:30:00+08:00"
+generation:
+  sequence: 1
+  core_version: 0.1.0
+  last_build_id: null
+style:
+  layout_style:
+    id: basic-editorial
+    version: 1.0.0
+    layer: builtin
+  writing_profile: null
+  preset: null
+paths:
+  material_manifest: materials/manifest.yaml
+  article_plan: article-plan.yaml
+  article: article.md
+  build_directory: build
+extensions:
+  shenyan.test:
+    fixture: true

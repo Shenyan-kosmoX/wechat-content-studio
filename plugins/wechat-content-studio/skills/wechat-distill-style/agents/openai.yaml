@@ -1,0 +1,4 @@
+interface:
+  display_name: "公众号风格蒸馏"
+  short_description: "从用户确认的多篇样本中提炼可追溯的写作与排版候选风格"
+  default_prompt: "Use $wechat-distill-style to analyze my confirmed references and create an evidence-traceable candidate style."

@@ -1,0 +1,93 @@
+skill: wechat-manage-style-library
+should_trigger:
+  - id: manage-001
+    prompt: 列出我的内置、私人、项目临时和 imports 风格。
+    reason: 全层风格检索。
+  - id: manage-002
+    prompt: 校验这个候选 Style Pack 是否完整。
+    reason: 候选校验。
+  - id: manage-003
+    prompt: 把项目里的候选风格导入 imports 区域等待确认。
+    reason: 候选导入。
+  - id: manage-004
+    prompt: 我已经确认了，把 candidate 0.2.0 提升为私人稳定版。
+    reason: 显式确认后提升。
+  - id: manage-005
+    prompt: 导入这个纯文本蒸馏得到的 writing profile 候选。
+    reason: 独立写作档案导入。
+  - id: manage-006
+    prompt: 把 writing profile 候选确认提升到私人库。
+    reason: 独立写作档案提升。
+  - id: manage-007
+    prompt: 将 clear-analytical 和 basic-editorial 组合成常用预设。
+    reason: preset 创建。
+  - id: manage-008
+    prompt: 归档旧版风格，但不要删除历史版本。
+    reason: 安全归档。
+  - id: manage-009
+    prompt: 查看 editorial 每个版本的状态、成熟度和实际目录。
+    reason: 版本与位置展示。
+  - id: manage-010
+    prompt: 新版本上线后保持老文章继续引用原来的 1.0.0。
+    reason: 版本固定与历史可复现。
+should_not_trigger:
+  - id: manage-no-001
+    prompt: 公开找这个公众号的十篇代表文章让我挑选。
+    expected_skill: wechat-distill-style
+    reason: 样本寻找与确认。
+  - id: manage-no-002
+    prompt: 从这些 HTML 统计 inline style 并生成候选。
+    expected_skill: wechat-distill-style
+    reason: 证据分析与候选生成。
+  - id: manage-no-003
+    prompt: 只有正文，帮我提炼写作节奏。
+    expected_skill: wechat-distill-style
+    reason: writing profile 蒸馏。
+  - id: manage-no-004
+    prompt: 把我的完整稿子用现有风格排版成公众号预览。
+    expected_skill: wechat-compose-article
+    reason: 文章排版交付。
+  - id: manage-no-005
+    prompt: 把图片固定在第二节结尾，之后继续改稿。
+    expected_skill: wechat-compose-article
+    reason: 文章位置约束。
+  - id: manage-no-006
+    prompt: 从主题开始和我共同写一篇产品复盘。
+    expected_skill: wechat-compose-article
+    reason: 共同写作。
+  - id: manage-no-007
+    prompt: 打开刚生成的预览让我复制富文本。
+    expected_skill: wechat-compose-article
+    reason: 预览交付。
+  - id: manage-no-008
+    prompt: 生成一张文章封面图。
+    expected_skill: none
+    reason: 图像生成不是风格库管理。
+  - id: manage-no-009
+    prompt: 查询人民币兑美元汇率。
+    expected_skill: none
+    reason: 非公众号产品任务。
+  - id: manage-no-010
+    prompt: 未经我确认直接把所有候选提升成稳定版。
+    expected_skill: none
+    reason: 违反显式确认边界。
+cross_skill_confusions:
+  - prompt: 候选刚生成，用户说先看看证据，不要保存。
+    expected_skill: wechat-distill-style
+    reason: 尚处候选审阅阶段。
+  - prompt: 用户看完证据并明确说确认保存为 1.0.0。
+    expected_skill: wechat-manage-style-library
+    reason: 进入持久化提升阶段。
+  - prompt: 选择私人风格后继续排版文章。
+    expected_sequence:
+      - wechat-manage-style-library
+      - wechat-compose-article
+    reason: 先解析选择，再执行文章任务。
+  - prompt: 新增样本后升级现有风格。
+    expected_sequence:
+      - wechat-distill-style
+      - wechat-manage-style-library
+    reason: 新证据先生成候选版本，再确认提升。
+  - prompt: 只想看风格列表，不写文章也不分析样本。
+    expected_skill: wechat-manage-style-library
+    reason: 纯库管理。

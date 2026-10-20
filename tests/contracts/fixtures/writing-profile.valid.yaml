@@ -1,0 +1,36 @@
+writing_profile_schema_version: "1.0"
+profile_id: clear-analytical
+name: 清晰分析型
+version: 1.0.0
+status: provisional
+description: 保持克制、清楚和有层次的分析表达。
+tags:
+  - analytical
+  - concise
+tone:
+  traits:
+    - 清晰
+    - 克制
+  avoid:
+    - 无依据的夸张结论
+narrative_rhythm:
+  pace: measured
+  sentence_variation: medium
+  notes: 先给判断，再展开依据。
+paragraph_length:
+  minimum_characters: 40
+  maximum_characters: 180
+argument_structure:
+  - 结论
+  - 证据
+  - 解释
+opening_patterns:
+  - 从读者正在面对的问题切入
+ending_patterns:
+  - 回到可执行结论
+evidence:
+  - rule_id: WRITE-TONE-001
+    meaning: 使用克制的判断语气
+    sample_ids:
+      - SAMPLE-001
+    confidence: medium

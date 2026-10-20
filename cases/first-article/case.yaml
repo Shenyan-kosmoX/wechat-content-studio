@@ -1,0 +1,64 @@
+schema_version: '0.1'
+kind: case
+id: first-article
+project_id: wechat-content-studio
+title: 从一篇 Markdown 文章生成可复制预览
+stage: results_available
+question:
+  summary: 如何在新的本地工作区完成文章创建、检查、预览和 skill 调用？
+  record: {path: docs/QUICKSTART.md}
+capability_refs: [article-projects, preview-and-copy]
+model:
+  description: 原创短文与 Basic Editorial 基础排版，经过 Core 和 CLI 生成本地 HTML。
+  record: {path: docs/STYLES.md}
+inputs:
+  - id: article
+    description: 本项目编写的试用短文。
+    record: {path: examples/first-article.md}
+execution:
+  environment_ref: source-python
+  cwd: .
+  steps:
+    - id: render-example
+      role: run
+      mode: command
+      argv: [python, tools/smoke_public.py, --output, .local/sors-example]
+      input_refs: [article]
+      output_refs: [smoke-report, preview]
+      timeout_seconds: 300
+outputs:
+  - id: smoke-report
+    description: 文章创建与渲染、安装后的 skill 入口检查记录。
+    format: json
+    path: .local/sors-example/smoke-report.json
+  - id: preview
+    description: 可在浏览器打开的文章预览。
+    format: html
+    path: .local/sors-example/workspace/articles/public-smoke/build/wechat_preview.html
+references:
+  - id: expected-workflow
+    description: 项目使用流程和输出约定。
+    record: {path: docs/QUICKSTART.md}
+criteria:
+  - id: commands-complete
+    description: 创建、检查和渲染命令成功，并生成正文与预览。
+    representation: documented
+    record: {path: tools/smoke_public.py}
+  - id: copy-entry
+    description: 预览提供富文本、纯文本和图片占位复制入口。
+    representation: documented
+    record: {path: docs/VALIDATION.md}
+checks:
+  - id: local-workflow
+    method: 在新目录运行 CLI，检查结果文件、预览复制入口及独立安装的三个 skill launcher。
+    criterion_refs: [commands-complete, copy-entry]
+    reference_refs: [expected-workflow]
+    input_refs: [article]
+    output_refs: [smoke-report, preview]
+    implementation: {path: tools/smoke_public.py}
+results:
+  status: observed
+  records:
+    - path: docs/verification.json
+  artifacts: []
+limitations: docs/VALIDATION.md
